@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Web-PTY</title>
+		<link rel="stylesheet" type="text/css" href="/stylesheets/xterm.css">
+		<script type="text/javascript" src="/scripts/xterm.js"></script>
+		<script type="text/javascript" src="/scripts/fit.js"></script>
+		<script type="text/javascript" src="/scripts/socket.io.js"></script>
+		<style>
+			#content {
+				width:100%;
+				height:100vh;
+				position:absolute;
+				margin:0;
+				padding:0;
+				left:0;
+				right:0;
+				display:block;
+			}
+			#char-size {
+				position:absolute;
+				top:-100vh;
+				font-family: courier-new, courier, monospace;
+				font-feature-settings: "liga" 0;
+			}
+			body {
+				overflow:hidden;
+			}
+		</style>
+	</head>
+	<body>
+	<div id="char-size">x</div>
+	<div id="content">
+	</div>
+	<script type="text/javascript">
+		var socket = io();
+		var terminal = new Terminal({cursorBlink:true});
+		terminal.open(document.getElementById('content'));
+		function resize(){
+			console.log('resize');
+			var charSize = document.getElementById('char-size');
+			var cols = (window.innerWidth / charSize.clientWidth) | 0;
+			var rows = (window.innerHeight / charSize.clientHeight) | 0;
+			terminal.fit();
+			socket.emit('resize',{cols:cols, rows:rows});
+		};
+		resize();
+		window.onresize = resize;
+		socket.on('stdout', function(data){terminal.write(data)});
+		socket.on('stderr', function(data){terminal.write(data)});
+		terminal.addListener('key',function(press){socket.emit('stdin', press)});
+	</script>
+	</body>
+</html>

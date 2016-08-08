@@ -1,0 +1,15 @@
+{
+	"ports":{
+		"http":3000,
+		"https":8000
+	},
+	"command":{
+		"name":"/bin/login",
+		"args":[]
+	},
+	"ssl":{
+		"key":"./ssl/key.pem",
+		"cert":"./ssl/cert.pem"
+	},
+	"whitelist":["127.0.0.1"]
+}
