@@ -33,22 +33,29 @@
 	<div id="content">
 	</div>
 	<script type="text/javascript">
-		var socket = io();
-		var terminal = new Terminal({cursorBlink:true});
-		terminal.open(document.getElementById('content'));
-		function resize(){
-			console.log('resize');
-			var charSize = document.getElementById('char-size');
-			var cols = (window.innerWidth / charSize.clientWidth) | 0;
-			var rows = (window.innerHeight / charSize.clientHeight) | 0;
-			terminal.fit();
-			socket.emit('resize',{cols:cols, rows:rows});
+		function renderTerminal(){
+			var socket = io();
+			window.terminal = new Terminal({cursorBlink:true});
+			terminal.open(document.getElementById('content'));
+			function resize(){
+				console.log('resize');
+				var charSize = document.getElementById('char-size');
+				var cols = (window.innerWidth / charSize.clientWidth) | 0;
+				var rows = (window.innerHeight / charSize.clientHeight) | 0;
+				terminal.fit();
+				socket.emit('resize',{cols:cols, rows:rows});
+			};
+			resize();
+			window.onresize = resize;
+			socket.on('stdout', function(data){terminal.write(data)});
+			socket.on('stderr', function(data){terminal.write(data)});
+			terminal.addListener('key',function(press){socket.emit('stdin', press)});
+		}
+		renderTerminal();
+		window.onerror = function(error){
+			renderTerminal();
+			window.terminal.write(error.message);
 		};
-		resize();
-		window.onresize = resize;
-		socket.on('stdout', function(data){terminal.write(data)});
-		socket.on('stderr', function(data){terminal.write(data)});
-		terminal.addListener('key',function(press){socket.emit('stdin', press)});
 	</script>
 	</body>
 </html>

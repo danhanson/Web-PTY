@@ -33,8 +33,9 @@ function login(socket){
 }
 
 app.use(function(req, res, next){
-	if(!conf.whitelist || !conf.whitelist.some(w => ip.isEqual(req.ip, w))){
-		req.sendStatus(403);
+	if(conf.whitelist && !conf.whitelist.some(w => ip.isEqual(req.ip, w))){
+		res.status(403);
+		res.send();
 		return;
 	}
 	if(req.secure){
@@ -45,7 +46,6 @@ app.use(function(req, res, next){
 	if(conf.ports.https !== 443){
 		 redirectUrl += ':' + conf.ports.https;
 	}
-	console.log(redirectUrl + req.url);
 	res.redirect(redirectUrl);
 });
 
