@@ -34,6 +34,7 @@ function login(socket){
 
 app.use(function(req, res, next){
 	if(conf.whitelist && !conf.whitelist.some(w => ip.isEqual(req.ip, w))){
+		console.log('attempted login from '+req.ip);
 		res.status(403);
 		res.send();
 		return;
