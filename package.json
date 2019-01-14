@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Daniel Hanson",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.14.0",
     "ip": "^1.1.3",
